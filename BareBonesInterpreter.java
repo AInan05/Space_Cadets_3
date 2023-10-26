@@ -12,8 +12,6 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Scanner;
 import java.util.Stack;
-import java.util.regex.Pattern;
-import java.util.regex.Matcher;
 
 public class BareBonesInterpreter {
 
@@ -156,7 +154,49 @@ public class BareBonesInterpreter {
     }
 
     public String executeArithmetic(String s) {
-        return "";
+        // Divide the line into parts.
+        String[] stuff = s.split("\\s|;");
+        String keyword = stuff[3]; //lazy solution
+        String var1 = stuff[0];
+        Integer var2;
+        Integer var3;
+        Integer result;
+        if (stuff[2].matches("\\d+")) {
+            var2 = Integer.valueOf(stuff[2]);
+        } else {
+            var2 = variables.get(stuff[2]);
+        }
+        if (stuff[4].matches("\\d+")) {
+            var3 = Integer.valueOf(stuff[4]);
+        } else {
+            var3 = variables.get(stuff[4]);
+        }
+        switch(keyword) {
+            case "+":
+                result = var2 + var3;
+                variables.put(var1, result);
+                break;
+            case "-":
+                result = var2 - var3;
+                if (result < 0) {
+                    return "Values assigned to variables cannot be negative";
+                }
+                variables.put(var1, result);
+                break;
+            case "/":
+                if (var3 == 0) {
+                    return "Division by zero";
+                }
+                result = var2 / var3; //rounds down
+                variables.put(var1, result);
+                break;
+            case "*":
+                result = var2 * var3;
+                variables.put(var1, result);
+                break;
+        }
+        System.out.println(variables);
+        return "pass";
     }
 
     public void executeIteration(String s) {
